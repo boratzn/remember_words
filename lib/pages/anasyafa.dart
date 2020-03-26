@@ -15,8 +15,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> {
   DatabaseHelper _databaseHelper;
   List<Kelimeler> tumKelimeler;
   int index;
@@ -25,11 +24,7 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     _databaseHelper = DatabaseHelper();
-    _databaseHelper.kelimeListesiniGetir().then((value) {
-      setState(() {
-        tumKelimeler = value;
-      });
-    });
+    _kelimeListesiniGetir();
 
     if (widget.gelenIndex == null) {
       index = 0;
@@ -48,14 +43,14 @@ class _MyHomePageState extends State<MyHomePage>
       appBar: widget.myAppBar == null
           ? myApBar(baslik: "Ana Sayfa")
           : widget.myAppBar,
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.grey.shade200, Colors.grey],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter),
-          ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.grey.shade200, Colors.grey],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
+        ),
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -96,40 +91,43 @@ class _MyHomePageState extends State<MyHomePage>
               SizedBox(
                 height: 30,
               ),
-              Text(
+              /*Text(
                 "Son eklenen kelime :",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              tumKelimeler == null
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Padding(
+              Padding(
                       padding: const EdgeInsets.only(left: 60, right: 30),
                       child: ListTile(
-                        title: Text(tumKelimeler.first.kelimeENG),
-                        subtitle: Text(tumKelimeler.first.kelimeTR),
+                        title: Text(tumKelimeler[0].kelimeENG),
+                        subtitle: Text(tumKelimeler[0].kelimeTR),
                         leading: Icon(Icons.save),
                         trailing: IconButton(
                           icon: Icon(Icons.refresh),
                           onPressed: () {
                             setState(() {
-                              _databaseHelper
-                                  .kelimeListesiniGetir()
-                                  .then((value) {
-                                setState(() {
-                                  tumKelimeler = value;
-                                });
-                              });
+                              _kelimeListesiniGetir();
                             });
                           },
                         ),
                       ),
-                    )
+                    )*/
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _kelimeListesiniGetir() {
+    // ignore: missing_return
+    _databaseHelper.kelimeListesiniGetir().then((value) {
+      if (value == null) {
+        return "Sözlükte kelime bulunmamaktadır.";
+      } else {
+        setState(() {
+          tumKelimeler = value;
+        });
+      }
+    });
   }
 }

@@ -22,6 +22,7 @@ class _KelimeEkleState extends State<KelimeEkle> {
   String aciklama;
   List<Kategori> tumKategoriler;
   int kategoriID = 1;
+  int kelimeSayac = 0;
 
   @override
   void initState() {
@@ -30,14 +31,12 @@ class _KelimeEkleState extends State<KelimeEkle> {
     _controller1 = TextEditingController();
     _controller2 = TextEditingController();
     tumKategoriler = List<Kategori>();
-    
+
     _databaseHelper.kategorileriGetir().then((kategoriMapListesi) {
       for (Map okunanMap in kategoriMapListesi) {
         tumKategoriler.add(Kategori.fromMap(okunanMap));
 
-        setState(() {
-
-        });
+        setState(() {});
       }
     });
   }
@@ -45,8 +44,8 @@ class _KelimeEkleState extends State<KelimeEkle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
+        key: _scaffoldKey,
+        resizeToAvoidBottomPadding: false,
         appBar: widget.myAppBar,
         body: Form(
           key: _formKey,
@@ -141,23 +140,25 @@ class _KelimeEkleState extends State<KelimeEkle> {
                       RaisedButton(
                         color: Colors.green,
                         onPressed: () {
-                          if(_formKey.currentState.validate()){
+                          if (_formKey.currentState.validate()) {
                             _formKey.currentState.save();
-                            _databaseHelper.kelimeEkle(Kelimeler(kategoriID: kategoriID, kelimeENG: girilenKelime, kelimeTR: aciklama)).then((value) {
+                            _databaseHelper
+                                .kelimeEkle(Kelimeler(
+                                    kategoriID: kategoriID,
+                                    kelimeENG: girilenKelime,
+                                    kelimeTR: aciklama,
+                                    kelimeSayac: kelimeSayac))
+                                .then((value) {
                               _scaffoldKey.currentState.showSnackBar(SnackBar(
                                 content: Text("Kelime eklendi."),
                                 duration: Duration(seconds: 3),
-                              )
-                              );
+                              ));
                               _controller1.text = "";
                               _controller2.text = "";
                               kategoriID = 1;
-                              setState(() {
-
-                              });
+                              setState(() {});
                             });
                           }
-
                         },
                         child: Text(
                           "Kaydet",

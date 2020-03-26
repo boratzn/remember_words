@@ -99,7 +99,7 @@ class DatabaseHelper{
     return kategoriListesi;
   }
 
-  //*****************************Buradan sonrasını yapacağım************************
+  //*****************************Kelimeler************************
 
   Future<List<Map<String, dynamic>>> kelimeleriGetir() async{
 
