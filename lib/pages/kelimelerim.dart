@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:remember_words/helper/database_helper.dart';
 import 'package:remember_words/models/kategori.dart';
@@ -18,19 +19,20 @@ class _KelimelerimState extends State<Kelimelerim> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<Kelimeler> tumKelimeler;
   List<Kategori> tumKategoriler;
-  DatabaseHelper _databaseHelper;
+  DatabaseHelper databaseHelper;
 
   @override
   void initState() {
     super.initState();
-    _databaseHelper = DatabaseHelper();
+    databaseHelper = DatabaseHelper();
     tumKelimeler = List<Kelimeler>();
-    _databaseHelper.kelimeListesiniGetir().then((gelenListe) {
+    databaseHelper.kelimeListesiniGetir().then((gelenListe) {
       setState(() {
         tumKelimeler = gelenListe;
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,163 +56,100 @@ class _KelimelerimState extends State<Kelimelerim> {
   }
 
   kelimeListsiniOlustur(BuildContext context, int index) {
-    /*return ListTile(
-      title: Text(tumKelimeler[index].kelimeENG),
-      subtitle: Text(tumKelimeler[index].kelimeTR),
-      leading: Icon(Icons.work),
-      trailing: IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () {
-          _databaseHelper
-              .kelimeSil(tumKelimeler[index].kelimeID)
-              .then((silinenID) {
-            if (silinenID != null) {
-              _scaffoldKey.currentState.showSnackBar(
-                SnackBar(
-                  content: Text("Kelime silme işlemi başarılı."),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            }
-          });
-          setState(() {
-            _databaseHelper.kelimeListesiniGetir().then((gelenListe) {
-              tumKelimeler = gelenListe;
-            });
-          });
-        },
-      ),
-    );*/
-    return Dismissible(
-      background: slideLeftBackground(),
-      direction: DismissDirection.endToStart,
-      key: UniqueKey(),
-      // ignore: missing_return
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.endToStart) {
-          final bool res = await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: Text(
-                      "${tumKelimeler[index].kelimeENG} kelimesini silmek istediğinizden emin misiniz?"),
-                  actions: <Widget>[
-                    FlatButton(
-                      color: Colors.red,
-                      child: Text("Vazgeç"),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      color: Colors.green,
-                      child: Text("Sil"),
-                      onPressed: () {
-                        _databaseHelper
-                            .kelimeSil(tumKelimeler[index].kelimeID)
-                            .then((silinenID) {
-                          if (silinenID != null) {
-                            _scaffoldKey.currentState.showSnackBar(
-                              SnackBar(
-                                content: Text("Kelime silme işlemi başarılı."),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        });
-                        setState(() {
-                          _databaseHelper
-                              .kelimeListesiniGetir()
-                              .then((gelenListe) {
-                            tumKelimeler = gelenListe;
-                          });
-                        });
-                      },
-                    )
-                  ],
-                );
-              });
-          return res;
-        }
-      },
-      /*child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Material(
-          elevation: 5,
-          borderRadius: BorderRadius.circular(10),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.deepPurple.shade50,
+            boxShadow: [BoxShadow(color: Colors.black, blurRadius: 20)],
+            borderRadius: BorderRadius.circular(50)),
+        height: 100,
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            CircleAvatar(
+              child: Text(
+                tumKelimeler[index].kelimeENG.substring(0, 1).toUpperCase(),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold,color: Colors.black),
+              ),
+              radius: 35,
+              backgroundColor: Colors.grey,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Icon(Icons.book),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      tumKelimeler[index].kelimeENG,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.brown),
-                    ),
-                    Text(
-                      tumKelimeler[index].kelimeTR,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red,
-                      fontStyle: FontStyle.italic),
-                    ),
-                  ],
+                Text(
+                  tumKelimeler[index].kelimeENG.toUpperCase(),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-
-                /*Text(
-                  tumKategoriler[tumKelimeler[index].kategoriID].kategoriBaslik,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                  ),
-                )*/
+                Text(
+                  tumKelimeler[index].kelimeTR +
+                      "(${kategoriBelirle(tumKelimeler[index].kategoriID, "tr")})",
+                  style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
+                ),
               ],
             ),
-          ),
-        ),
-      ),*/
-
-      child: ListTile(
-        title: Text(tumKelimeler[index].kelimeENG),
-        subtitle: Text(tumKelimeler[index].kelimeTR),
-        leading: Icon(Icons.work),
-      ),
-    );
-
-  }
-
-  Widget slideLeftBackground() {
-    return Container(
-      color: Colors.red,
-      child: Align(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Icon(
-              Icons.delete,
-              color: Colors.white,
-            ),
-            Text(
-              " Delete",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.right,
-            ),
-            SizedBox(
-              width: 20,
+            IconButton(
+              iconSize: 35,
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                databaseHelper
+                    .kelimeSil(tumKelimeler[index].kelimeID)
+                    .then((silinenID) {
+                  if (silinenID != null) {
+                    _scaffoldKey.currentState.showSnackBar(
+                      SnackBar(
+                        content: Text("Kelime silme işlemi başarılı."),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                });
+                databaseHelper
+                    .kelimeListesiniGetir()
+                    .then((gelenListe) {
+                  setState(() {
+                    tumKelimeler = gelenListe;
+                  });
+                });
+              },
             ),
           ],
         ),
-        alignment: Alignment.centerRight,
       ),
     );
+
   }
+
+  kategoriBelirle(int kategoriID, String language) {
+    if (language == "eng") {
+      switch (kategoriID) {
+        case 1:
+          return "Noun";
+          break;
+        case 2:
+          return "Verb";
+          break;
+        case 3:
+          return "Adjective";
+          break;
+      }
+    }
+
+    if (language == "tr") {
+      switch (kategoriID) {
+        case 1:
+          return "İsim";
+          break;
+        case 2:
+          return "Fiil";
+          break;
+        case 3:
+          return "Sıfat";
+          break;
+      }
+    }
+  }
+
 }

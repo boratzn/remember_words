@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remember_words/helper/database_helper.dart';
 import 'package:remember_words/models/kelimeler.dart';
+import 'package:remember_words/pages/alistirma.dart';
 import 'package:remember_words/pages/kelime_ekle.dart';
 import 'package:remember_words/ui/appbar_content.dart';
 import 'package:remember_words/ui/bottom_navigation_bar.dart';
@@ -17,14 +18,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   DatabaseHelper _databaseHelper;
-  List<Kelimeler> tumKelimeler;
+  List<Kelimeler> tumKelimeler = List<Kelimeler>();
   int index;
 
   @override
   void initState() {
     super.initState();
     _databaseHelper = DatabaseHelper();
-    _kelimeListesiniGetir();
+    tumKelimeler = _kelimeListesiniGetir();
 
     if (widget.gelenIndex == null) {
       index = 0;
@@ -46,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [Colors.grey.shade200, Colors.grey],
+              colors: [Colors.cyan.shade200, Colors.white,Colors.cyan.shade200],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter),
         ),
@@ -55,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton(
-                color: Colors.brown.shade200,
+                //color: Colors.deepPurple.shade200,
                 padding: EdgeInsets.all(20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
@@ -75,13 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 30,
               ),
               RaisedButton(
-                color: Colors.brown.shade200,
+                //color: Colors.deepPurple.shade200,
                 padding: EdgeInsets.all(20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 onPressed: () {
-                  //Navigator.of(context).push(MaterialPageRoute(builder: (_) => KelimeEkle(myAppBar: myApBar(baslik: "Kelime Ekle"),)));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => Alistirma()));
                 },
                 child: Text(
                   "Alıştırma Yap",
@@ -118,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _kelimeListesiniGetir() {
+  List<Kelimeler> _kelimeListesiniGetir() {
     // ignore: missing_return
     _databaseHelper.kelimeListesiniGetir().then((value) {
       if (value == null) {
@@ -127,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           tumKelimeler = value;
         });
+        return tumKelimeler;
       }
     });
   }

@@ -20,6 +20,7 @@ class Kategori {
     kategoriBaslik = map["kategoriBaslik"];
   }
 
+
   @override
   String toString() {
     return 'Kategori{kategoriID: $kategoriID, kategoriBaslik: $kategoriBaslik}';

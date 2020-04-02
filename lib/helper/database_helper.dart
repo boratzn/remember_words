@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:remember_words/models/kategori.dart';
 import 'package:remember_words/models/kelimeler.dart';
+import 'package:remember_words/models/ogrendiklerim.dart';
 import 'dart:io';
 
 import "package:synchronized/synchronized.dart";
@@ -138,6 +139,48 @@ class DatabaseHelper{
 
     var db = await _getDataBase();
     var sonuc = await db.delete("kelime", where: "kelimeID = ?", whereArgs: [kelimeID]);
+    return sonuc;
+  }
+
+  //**********************************************ÖĞRENDİKLERİM*********************************************
+
+  Future<List<Map<String, dynamic>>> ogrendiklerimiGetir() async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.rawQuery('select * from "ogrendiklerim" inner join kategori on kategori.kategoriID = "ogrendiklerim".kategoriID order by ogrenilenID Desc;');
+
+    return sonuc;
+  }
+
+  Future<List<Ogrendiklerim>> ogrendikleriminListesiniGetir() async{
+
+    var ogrenilenMapListesi = await ogrendiklerimiGetir();
+    var ogrenilenListesi = List<Ogrendiklerim>();
+
+    for(Map map in ogrenilenMapListesi) {
+      ogrenilenListesi.add(Ogrendiklerim.fromMap(map));
+    }
+    return ogrenilenListesi;
+  }
+
+  Future<int> ogrendiklerimEkle(Ogrendiklerim ogrendiklerim) async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.insert("ogrendiklerim", ogrendiklerim.toMap());
+    return sonuc;
+  }
+
+  Future<int> ogrendiklerimGuncelle(Ogrendiklerim ogrendiklerim) async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.update("ogrendiklerim", ogrendiklerim.toMap(), where: "ogrenilenID = ?", whereArgs: [ogrendiklerim.ogrenilenID]);
+    return sonuc;
+  }
+
+  Future<int> ogrendiklerimSil(int ogrenilenID) async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.delete("ogrendiklerim", where: "ogrenilenID = ?", whereArgs: [ogrenilenID]);
     return sonuc;
   }
 

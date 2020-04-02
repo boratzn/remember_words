@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remember_words/pages/anasyafa.dart';
 import 'package:remember_words/pages/kelimelerim.dart';
-import 'package:remember_words/pages/ogrendiklerim.dart';
+import 'package:remember_words/pages/ogrenilenler.dart';
 import 'package:remember_words/ui/appbar_content.dart';
 
 class MyBottomNavBar extends StatefulWidget {
@@ -58,7 +58,7 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
         break;
       case 2:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => Ogrendiklerim(
+            builder: (_) => Ogrenilenler(
                   myAppBar: myApBar(baslik: "Öğrendiklerim"),
                   gelenIndex: secilenIndex,
                 )));

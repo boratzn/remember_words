@@ -21,6 +21,7 @@ class _KelimeEkleState extends State<KelimeEkle> {
   String girilenKelime;
   String aciklama;
   List<Kategori> tumKategoriler;
+  List<Kelimeler> tumKelimeler;
   int kategoriID = 1;
   int kelimeSayac = 0;
 
@@ -61,6 +62,7 @@ class _KelimeEkleState extends State<KelimeEkle> {
                       hintText: "Kelimeyi Girin",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
+                  // ignore: missing_return
                   validator: (value) {
                     if (value.length == 0) {
                       return "Lütfen Boş Bırakmayınız!!";
@@ -81,6 +83,7 @@ class _KelimeEkleState extends State<KelimeEkle> {
                       hintText: "Anlamını yazınız",
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
+                  // ignore: missing_return
                   validator: (value) {
                     if (value.length == 0) {
                       return "Lütfen Boş Bırakmayınız!!";
@@ -147,7 +150,7 @@ class _KelimeEkleState extends State<KelimeEkle> {
                                     kategoriID: kategoriID,
                                     kelimeENG: girilenKelime,
                                     kelimeTR: aciklama,
-                                    kelimeSayac: kelimeSayac))
+                            kelimeSayac: kelimeSayac))
                                 .then((value) {
                               _scaffoldKey.currentState.showSnackBar(SnackBar(
                                 content: Text("Kelime eklendi."),

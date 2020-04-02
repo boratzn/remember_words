@@ -6,7 +6,7 @@ class Kelimeler {
   int kelimeSayac;
 
   Kelimeler({this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac});
-  Kelimeler.withID({this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac});
+  Kelimeler.withID({this.kelimeID,this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac});
 
 
   Map<String, dynamic> toMap() {
@@ -28,4 +28,5 @@ class Kelimeler {
     kelimeTR = map["kelimeTR"];
     kelimeSayac = map["kelimeSayac"];
   }
+
 }
