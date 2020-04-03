@@ -92,26 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(
                 height: 30,
               ),
-              /*Text(
-                "Son eklenen kelime :",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Padding(
-                      padding: const EdgeInsets.only(left: 60, right: 30),
-                      child: ListTile(
-                        title: Text(tumKelimeler[0].kelimeENG),
-                        subtitle: Text(tumKelimeler[0].kelimeTR),
-                        leading: Icon(Icons.save),
-                        trailing: IconButton(
-                          icon: Icon(Icons.refresh),
-                          onPressed: () {
-                            setState(() {
-                              _kelimeListesiniGetir();
-                            });
-                          },
-                        ),
-                      ),
-                    )*/
             ],
           ),
         ),

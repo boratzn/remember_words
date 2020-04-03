@@ -38,7 +38,7 @@ class _KelimelerimState extends State<Kelimelerim> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.deepPurple.shade50,
+      backgroundColor: Colors.white,
       bottomNavigationBar: MyBottomNavBar(
         gelenIndex: widget.gelenIndex,
       ),
