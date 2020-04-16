@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:remember_words/pages/anasyafa.dart';
 import 'package:remember_words/pages/kelimelerim.dart';
+import 'package:remember_words/pages/languages.dart';
+import 'package:remember_words/pages/learned_languages.dart';
 import 'package:remember_words/pages/ogrenilenler.dart';
 import 'package:remember_words/ui/appbar_content.dart';
 
@@ -51,14 +53,14 @@ class _MyBottomNavBarState extends State<MyBottomNavBar> {
         break;
       case 1:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => Kelimelerim(
-                  myAppBar: myApBar(baslik: "Kelimelerim"),
+            builder: (_) => Languages(
+                  myAppBar: myApBar(baslik: "Diller"),
                   gelenIndex: secilenIndex,
                 )));
         break;
       case 2:
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => Ogrenilenler(
+            builder: (_) => LearnedLanguages(
                   myAppBar: myApBar(baslik: "Öğrendiklerim"),
                   gelenIndex: secilenIndex,
                 )));

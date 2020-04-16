@@ -1,12 +1,19 @@
 import 'dart:math';
+
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:remember_words/common_controls/common_controls.dart';
 import 'package:remember_words/helper/database_helper.dart';
+import 'package:remember_words/models/diller.dart';
+import 'package:remember_words/models/diller_listesi.dart';
 import 'package:remember_words/models/kelimeler.dart';
 import 'package:remember_words/models/ogrendiklerim.dart';
 
 class Alistirma extends StatefulWidget {
+  final List<Kelimeler> gelenKelimeler;
+
+  Alistirma({this.gelenKelimeler});
 
   @override
   _AlistirmaState createState() => _AlistirmaState();
@@ -14,41 +21,51 @@ class Alistirma extends StatefulWidget {
 
 class _AlistirmaState extends State<Alistirma> {
   GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
+  var _scaffoldKey = GlobalKey<ScaffoldState>();
+  DillerListesi dillerListesi;
+  List<Diller> diller;
+  Controls _controls;
   List<Kelimeler> kelimeler;
-  int kelimeSayac = 0;
+  List<Kelimeler> gelenKelimeler;
   DatabaseHelper databaseHelper;
+  Color currentRenk = Colors.blue, lastRenk = Colors.blue;
+  int kelimeSayac = 0;
   int sayi;
-  Color renk;
+
 
   @override
   void initState() {
     super.initState();
     kelimeler = List<Kelimeler>();
+    diller = List<Diller>();
+    dillerListesi = DillerListesi();
+    _controls = Controls(currentRenk: currentRenk, lastRenk: lastRenk);
     databaseHelper = DatabaseHelper();
+    gelenKelimeler = widget.gelenKelimeler;
     databaseHelper.kelimeListesiniGetir().then((gelenListe) {
       setState(() {
         kelimeler = gelenListe;
       });
     });
     sayi = _randomSayiUret();
-    renk = _randomRenkUret();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Alıştırma Yap"),
-        backgroundColor: renk,
+        backgroundColor: currentRenk,
       ),
-      body: kelimeler.length == 0
+      body: gelenKelimeler.length == 0
           ? Center(child: Text("Sözlükte kelime bulunmamaktadır!!"))
           : FlipCard(
-        key: cardKey,
-        front: _onGorunum(context),
-        back: _arkaGorunum(context),
-        direction: FlipDirection.HORIZONTAL,
-      ),
+              key: cardKey,
+              front: _onGorunum(context),
+              back: _arkaGorunum(context),
+              direction: FlipDirection.HORIZONTAL,
+            ),
     );
   }
 
@@ -62,37 +79,35 @@ class _AlistirmaState extends State<Alistirma> {
             boxShadow: [BoxShadow(color: Colors.black, blurRadius: 20)],
             borderRadius: BorderRadius.circular(50)),
         height: 400,
-        width: MediaQuery
-            .of(context)
-            .size
-            .width,
+        width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Container(
               height: 120,
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               child: Center(
-                child: Text(kategoriBelirle(kelimeler[sayi].kategoriID, "eng"),
+                child: Text(
+                    _controls.kategoriBelirle(
+                        gelenKelimeler[sayi].kategoriID, "eng"),
                     style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                         color: Colors.black)),
               ),
               decoration: BoxDecoration(
-                  color: renk, borderRadius: BorderRadius.circular(50)),
+                  color: currentRenk, borderRadius: BorderRadius.circular(50)),
             ),
             SizedBox(
               height: 100,
             ),
             Center(
               child: Text(
-                kelimeler[sayi].kelimeENG.toUpperCase(),
+                gelenKelimeler[sayi].kelimeENG.toUpperCase(),
                 style: TextStyle(
-                    fontSize: 25, fontWeight: FontWeight.bold, color: renk),
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: currentRenk),
               ),
             )
           ],
@@ -114,38 +129,36 @@ class _AlistirmaState extends State<Alistirma> {
                 boxShadow: [BoxShadow(color: Colors.black, blurRadius: 20)],
                 borderRadius: BorderRadius.circular(50)),
             height: 400,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width: MediaQuery.of(context).size.width,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
                   height: 120,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
+                  width: MediaQuery.of(context).size.width,
                   child: Center(
                     child: Text(
-                        kategoriBelirle(kelimeler[sayi].kategoriID, "tr"),
+                        _controls.kategoriBelirle(
+                            gelenKelimeler[sayi].kategoriID, "tr"),
                         style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
                   ),
                   decoration: BoxDecoration(
-                      color: renk, borderRadius: BorderRadius.circular(50)),
+                      color: currentRenk,
+                      borderRadius: BorderRadius.circular(50)),
                 ),
                 SizedBox(
                   height: 100,
                 ),
                 Center(
                   child: Text(
-                    kelimeler[sayi].kelimeTR.toUpperCase(),
+                    gelenKelimeler[sayi].kelimeTR.toUpperCase(),
                     style: TextStyle(
-                        fontSize: 25, fontWeight: FontWeight.bold, color: renk),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: currentRenk),
                   ),
                 ),
               ],
@@ -170,7 +183,7 @@ class _AlistirmaState extends State<Alistirma> {
             onPressed: () {
               setState(() {
                 sayi = _randomSayiUret();
-                renk = _randomRenkUret();
+                currentRenk = _controls.renkKontrol();
                 cardKey.currentState.toggleCard();
               });
             },
@@ -188,38 +201,49 @@ class _AlistirmaState extends State<Alistirma> {
           RawMaterialButton(
             onPressed: () {
               kelimeSayac = _sayacArttir(kelimeler[sayi].kelimeSayac);
-              print("${kelimeler[sayi].kelimeENG}: " + kelimeSayac.toString());
-              databaseHelper.kelimeGuncelle(
-                  Kelimeler.withID(kelimeID: kelimeler[sayi].kelimeID,
+              print("${gelenKelimeler[sayi].kelimeENG}: " + kelimeSayac.toString());
+              databaseHelper
+                  .kelimeGuncelle(Kelimeler.withID(
+                      kelimeID: kelimeler[sayi].kelimeID,
                       kategoriID: kelimeler[sayi].kategoriID,
                       kelimeTR: kelimeler[sayi].kelimeTR,
                       kelimeENG: kelimeler[sayi].kelimeENG,
-                      kelimeSayac: kelimeSayac)).then((guncID) {
+                      kelimeSayac: kelimeSayac,
+                      languagesID: kelimeler[sayi].languagesID))
+                  .then((guncID) {
                 databaseHelper.kelimeListesiniGetir().then((val) {
                   setState(() {
                     kelimeler = val;
-                    cardKey.currentState.toggleCard();
+                    if(kelimeler.length != 0){
+                      cardKey.currentState.toggleCard();
+                    }
                   });
                   sayi = _randomSayiUret();
-                  renk = _randomRenkUret();
+                  currentRenk = _controls.renkKontrol();
                 });
               });
 
-              if (kelimeSayac >= 3) {
-                databaseHelper.kelimeSil(kelimeler[sayi].kelimeID).then((
-                    value) {
-                  if (value != 0) {
-                    //Öğrenilen tabloya kelimeyi ekle
-                    databaseHelper.ogrendiklerimEkle(
-                        Ogrendiklerim(kategoriID: kelimeler[sayi].kategoriID,
-                        kelimeENG: kelimeler[sayi].kelimeENG,
-                        kelimeTR: kelimeler[sayi].kelimeTR));
-                    databaseHelper.kelimeListesiniGetir().then((val) {
-                      setState(() {
-                        kelimeler = val;
-                      });
-                    });
-                  }
+              if (kelimeSayac >= 10) {
+                //Öğrenilen tabloya kelimeyi ekle
+                databaseHelper.ogrendiklerimEkle(Ogrendiklerim(
+                    kategoriID: kelimeler[sayi].kategoriID,
+                    kelimeENG: kelimeler[sayi].kelimeENG,
+                    kelimeTR: kelimeler[sayi].kelimeTR,
+                    languagesID: kelimeler[sayi].languagesID)).then((value) {
+                });
+                //Kelimeyi Kelimeler tablosundan sil
+                databaseHelper
+                    .kelimeSil(kelimeler[sayi].kelimeID)
+                    .then((value) {
+                  setState(() {
+                    gelenKelimeler.removeAt(sayi);
+                  });
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text(
+                        "${kelimeler[sayi].kelimeENG} kelimesi Öğrenilenler listesine eklendi."),
+                    duration: Duration(seconds: 3),
+                  ));
+
                 });
               }
             },
@@ -238,101 +262,33 @@ class _AlistirmaState extends State<Alistirma> {
     );
   }
 
-  kategoriBelirle(int kategoriID, String language) {
-    if (language == "eng") {
-      switch (kategoriID) {
-        case 1:
-          return "Noun";
-          break;
-        case 2:
-          return "Verb";
-          break;
-        case 3:
-          return "Adjective";
-          break;
-      }
-    }
-
-    if (language == "tr") {
-      switch (kategoriID) {
-        case 1:
-          return "İsim";
-          break;
-        case 2:
-          return "Fiil";
-          break;
-        case 3:
-          return "Sıfat";
-          break;
-      }
-    }
-  }
-
   int _randomSayiUret() {
     var random = Random();
     var length;
+    int currentSayi, lastSayi;
     setState(() {
       length = kelimeler.length;
     });
-    if (length == 0) {
+    if (length == 0 || length == null) {
       sayi = 0;
     } else {
-      sayi = random.nextInt(length);
+      currentSayi = random.nextInt(length);
+      print(currentSayi);
+      if (currentSayi == lastSayi) {
+        for (int i = 0; currentSayi == lastSayi; i++) {
+          lastSayi = currentSayi;
+          currentSayi = random.nextInt(length);
+        }
+        sayi = currentSayi;
+        print(sayi);
+        return sayi;
+      } else {
+        lastSayi = currentSayi;
+        sayi = currentSayi;
+        return sayi;
+      }
     }
     return sayi;
-  }
-
-  Color _randomRenkUret() {
-    Color color;
-    var random = Random();
-    int sayi = random.nextInt(10);
-    switch (sayi) {
-      case 0:
-        color = Colors.orange;
-        return color;
-        break;
-      case 1:
-        color = Colors.blue;
-        return color;
-        break;
-      case 2:
-        color = Colors.cyan;
-        return color;
-        break;
-      case 3:
-        color = Colors.amber;
-        return color;
-        break;
-      case 4:
-        color = Colors.red;
-        return color;
-        break;
-      case 5:
-        color = Colors.brown;
-        return color;
-        break;
-      case 6:
-        color = Colors.deepPurple;
-        return color;
-        break;
-      case 7:
-        color = Colors.green;
-        return color;
-        break;
-      case 8:
-        color = Colors.indigoAccent;
-        return color;
-        break;
-      case 9:
-        color = Colors.lightGreen;
-        return color;
-        break;
-      case 10:
-        color = Colors.deepOrangeAccent;
-        return color;
-        break;
-    }
-    //return color;
   }
 
   int _sayacArttir(int oAnkiSayac) {

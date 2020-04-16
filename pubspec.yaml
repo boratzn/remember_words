@@ -46,7 +46,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/words.db
-  #   - images/a_dot_ham.jpeg
+    - assets/img/english.png
+    - assets/img/france.png
+    - assets/img/germany.png
+    - assets/img/italy.png
+    - assets/img/russia.png
+    - assets/img/spain.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

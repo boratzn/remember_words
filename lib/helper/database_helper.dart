@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:remember_words/models/diller.dart';
 import 'package:remember_words/models/kategori.dart';
 import 'package:remember_words/models/kelimeler.dart';
 import 'package:remember_words/models/ogrendiklerim.dart';
@@ -181,6 +182,48 @@ class DatabaseHelper{
 
     var db = await _getDataBase();
     var sonuc = await db.delete("ogrendiklerim", where: "ogrenilenID = ?", whereArgs: [ogrenilenID]);
+    return sonuc;
+  }
+
+  //***********************************************DİLLER************************************************
+
+  Future<List<Map<String, dynamic>>> dilleriGetir() async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.rawQuery('select * from "languages" order by languagesID Asc;');
+
+    return sonuc;
+  }
+
+  Future<List<Diller>> dillerinListesiniGetir() async{
+
+    var dillerMapListesi = await dilleriGetir();
+    var dillerinListesi = List<Diller>();
+
+    for(Map map in dillerMapListesi) {
+      dillerinListesi.add(Diller.fromMap(map));
+    }
+    return dillerinListesi;
+  }
+
+  Future<int> dillerEkle(Diller diller) async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.insert("languages", diller.toMap());
+    return sonuc;
+  }
+
+  Future<int> dilleriGuncelle(Diller diller) async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.update("languages", diller.toMap(), where: "languagesID = ?", whereArgs: [diller.languagesID]);
+    return sonuc;
+  }
+
+  Future<int> dilleriSil(int languagesID) async{
+
+    var db = await _getDataBase();
+    var sonuc = await db.delete("languages", where: "languagesID = ?", whereArgs: [languagesID]);
     return sonuc;
   }
 

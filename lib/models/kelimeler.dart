@@ -1,12 +1,13 @@
 class Kelimeler {
   int kelimeID;
   int kategoriID;
+  int languagesID;
   String kelimeENG;
   String kelimeTR;
   int kelimeSayac;
 
-  Kelimeler({this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac});
-  Kelimeler.withID({this.kelimeID,this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac});
+  Kelimeler({this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac,this.languagesID});
+  Kelimeler.withID({this.kelimeID,this.kategoriID, this.kelimeENG, this.kelimeTR, this.kelimeSayac, this.languagesID});
 
 
   Map<String, dynamic> toMap() {
@@ -17,6 +18,7 @@ class Kelimeler {
     map["kelimeENG"] = kelimeENG;
     map["kelimeTR"] = kelimeTR;
     map["kelimeSayac"] = kelimeSayac;
+    map["languagesID"] = languagesID;
 
     return map;
   }
@@ -27,6 +29,7 @@ class Kelimeler {
     kelimeENG = map["kelimeENG"];
     kelimeTR = map["kelimeTR"];
     kelimeSayac = map["kelimeSayac"];
+    languagesID = map["languagesID"];
   }
 
 }

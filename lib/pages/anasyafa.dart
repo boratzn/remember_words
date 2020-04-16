@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:remember_words/helper/database_helper.dart';
 import 'package:remember_words/models/kelimeler.dart';
 import 'package:remember_words/pages/alistirma.dart';
-import 'package:remember_words/pages/kelime_ekle.dart';
+import 'package:remember_words/pages/languages.dart';
 import 'package:remember_words/ui/appbar_content.dart';
 import 'package:remember_words/ui/bottom_navigation_bar.dart';
+
+import 'kelime_ekle.dart';
 
 class MyHomePage extends StatefulWidget {
   final AppBar myAppBar;
@@ -37,14 +39,70 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple.shade50,
-      bottomNavigationBar: MyBottomNavBar(
-        gelenIndex: index,
-      ),
-      appBar: widget.myAppBar == null
-          ? myApBar(baslik: "Ana Sayfa")
-          : widget.myAppBar,
-      body: Container(
+        bottomNavigationBar: MyBottomNavBar(
+          gelenIndex: index,
+        ),
+        appBar: widget.myAppBar == null
+            ? myApBar(baslik: "Ana Sayfa")
+            : widget.myAppBar,
+        body: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: InkWell(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => KelimeEkle(
+                      myAppBar: myApBar(baslik: "Kelime Ekle"),
+                    )));
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 3,
+                    decoration: BoxDecoration(
+                        boxShadow: [BoxShadow(color: Colors.black, blurRadius: 20)],
+                        color: Colors.lightBlueAccent,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Center(
+                      child: Text(
+                        "Kelime Ekle",
+                        style:
+                            TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: InkWell(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => Languages(gelenIndex: 0,myAppBar: myApBar(baslik: "Alistirma"),
+                    )));
+                  },
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 3,
+                    decoration: BoxDecoration(
+                        boxShadow: [BoxShadow(color: Colors.black, blurRadius: 20)],
+                        color: Colors.lightBlueAccent,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Center(
+                      child: Text(
+                        "Alıştırma Yap",
+                        style:
+                            TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+
+        /*Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
               colors: [Colors.cyan.shade200, Colors.white,Colors.cyan.shade200],
@@ -95,8 +153,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
-    );
+      ),*/
+        );
   }
 
   List<Kelimeler> _kelimeListesiniGetir() {
