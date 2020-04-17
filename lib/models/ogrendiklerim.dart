@@ -30,6 +30,4 @@ class Ogrendiklerim {
     languagesID = map["languagesID"];
   }
 
-
-
 }
