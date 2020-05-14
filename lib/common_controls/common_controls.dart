@@ -149,6 +149,9 @@ class Controls {
         case 3:
           return "Adjective";
           break;
+        case 4:
+          return "Adverb";
+          break;
       }
     }
 
@@ -162,6 +165,9 @@ class Controls {
           break;
         case 3:
           return "Sıfat";
+          break;
+        case 4:
+          return "Zarf";
           break;
       }
     }

@@ -23,6 +23,7 @@ class _OgrenilenlerState extends State<Ogrenilenler> {
   List<Ogrendiklerim> gelenKelimeler;
   DatabaseHelper databaseHelper;
   Color currentRenk = Colors.blue, lastRenk = Colors.blue;
+  bool control = false;
 
   @override
   void initState() {
@@ -44,26 +45,41 @@ class _OgrenilenlerState extends State<Ogrenilenler> {
     return Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.white,
-        appBar: widget.myAppBar,
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          title: Center(child: Text("Öğrenilenler")),
+          actions: [
+            Switch(
+              activeColor: Colors.green,
+              value: control,
+              onChanged: (value) {
+                setState(() {
+                  control = value;
+                });
+              },
+            )
+          ],
+        ),
         body: gelenKelimeler.length == 0
             ? Center(
                 child: Text("Öğrenilen kelime bulunmamaktadır."),
               )
-            : Stack(
+            : control == false ? Stack(
                 children: <Widget>[
                   PageView.builder(
                     itemCount: gelenKelimeler.length,
                     itemBuilder: (context, index) =>
-                        _ogrenilenListeyiGetir2(context, index),
+                        _ogrenilenListeyiGetir(context, index),
                     scrollDirection: Axis.horizontal,
                   ),
                   Positioned(
                     child: CircleAvatar(
+                      radius: 25,
                       backgroundColor: Colors.red,
                       child: Text(
                         gelenKelimeler.length.toString(),
                         style: TextStyle(
-                            fontSize: 25,
+                            fontSize: gelenKelimeler.length > 999 ? 15 : 22,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
@@ -72,10 +88,35 @@ class _OgrenilenlerState extends State<Ogrenilenler> {
                     left: 5,
                   ),
                 ],
-              ));
+              ) :
+        Stack(
+          children: [
+            ListView.builder(
+              itemBuilder: (context, index) =>
+                  kelimeListesiniOlustur2(context, index),
+              itemCount: gelenKelimeler.length,
+            ),
+            Positioned(
+              child: CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.red.withOpacity(0.6),
+                child: Text(
+                  gelenKelimeler.length.toString(),
+                  style: TextStyle(
+                      fontSize: gelenKelimeler.length > 999 ? 15 : 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              bottom: 5,
+              left: 5,
+            ),
+          ],
+        )
+    );
   }
 
-  _ogrenilenListeyiGetir2(BuildContext context, int index) {
+  _ogrenilenListeyiGetir(BuildContext context, int index) {
 
     currentRenk = _controls.renkKontrol();
 
@@ -145,6 +186,94 @@ class _OgrenilenlerState extends State<Ogrenilenler> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  kelimeListesiniOlustur2(BuildContext context, int index) {
+    currentRenk = _controls.renkKontrol();
+
+    return Container(
+      color: Colors.grey.shade100,
+      child: ExpansionTile(
+        leading: Icon(
+          Icons.book,
+          color: currentRenk,
+        ),
+        title: Text(
+          gelenKelimeler[index].kelimeENG.toUpperCase(),
+          style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontStyle: FontStyle.italic),
+        ),
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                height: 75,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: currentRenk,
+                  //borderRadius: BorderRadius.circular(50)
+                ),
+              ),
+              SizedBox(height: 10,),
+              Text(
+                gelenKelimeler[index].kelimeENG,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10,),
+              Text(
+                gelenKelimeler[index].kelimeTR +
+                    "(${_controls.kategoriBelirle(gelenKelimeler[index].kategoriID, "tr")})",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Kelimeyi Sil => ",
+                        style: TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold,)),
+                    IconButton(
+                      iconSize: 35,
+                      color: currentRenk,
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        databaseHelper
+                            .ogrendiklerimSil(
+                            tumOgrendiklerim[index].ogrenilenID)
+                            .then((silinenID) {
+                          if (silinenID != null) {
+                            setState(() {
+                              gelenKelimeler.removeAt(index);
+                            });
+                            _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(
+                                content: Text("Kelime silme işlemi başarılı."),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        });
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

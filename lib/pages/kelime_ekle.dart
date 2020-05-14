@@ -15,7 +15,7 @@ class KelimeEkle extends StatefulWidget {
 
 class _KelimeEkleState extends State<KelimeEkle> {
   var _formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController _controller1;
   TextEditingController _controller2;
   DatabaseHelper _databaseHelper;
@@ -55,13 +55,17 @@ class _KelimeEkleState extends State<KelimeEkle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          title: Text("Kelime ekle"),
-          backgroundColor: Colors.blue,
-        ),
-        body: Center(
+      key: _scaffoldKey,
+      resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        title: Text("Kelime ekle"),
+        backgroundColor: Colors.blue,
+      ),
+      body: GestureDetector(
+        onTap: (){
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
@@ -80,8 +84,7 @@ class _KelimeEkleState extends State<KelimeEkle> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        maxLength: 20,
-                        autofocus: false,
+                        maxLength: 75,
                         controller: _controller1,
                         decoration: InputDecoration(
                             hintText: "Kelimeyi Yazınız",
@@ -102,7 +105,6 @@ class _KelimeEkleState extends State<KelimeEkle> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        autofocus: false,
                         controller: _controller2,
                         maxLines: 3,
                         decoration: InputDecoration(
@@ -215,8 +217,8 @@ class _KelimeEkleState extends State<KelimeEkle> {
                                       .then((value) {
                                     _scaffoldKey.currentState
                                         .showSnackBar(SnackBar(
-                                          content: Text("Kelime eklendi."),
-                                          duration: Duration(seconds: 3),
+                                      content: Text("Kelime eklendi."),
+                                      duration: Duration(seconds: 3),
                                     ));
                                     _controller1.text = "";
                                     _controller2.text = "";
@@ -240,7 +242,9 @@ class _KelimeEkleState extends State<KelimeEkle> {
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   kategoriItemleriOlustur() {
